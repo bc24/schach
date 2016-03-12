@@ -9,13 +9,14 @@
    $blackfig = "#00bfff";				   //Schwarz
    $bordercol = "#ff8000";
 ?>
-body {
-	text-align: center;
+body
+{
+	text-align: ;
 	margin: auto;
 	padding: auto;
-	//font-family: sans serif, Verdana;
+	font-family: sans serif, Verdana;
 	background-image: url("hintergrund.jpg");
-	//background-color: #505050;
+	background-color: #000000;
 	color: #ffffff;
 
 	background-repeat:no-repeat;
@@ -25,25 +26,52 @@ body {
 
 }
 
-header {
-	
+.Menue
+{
+
 }
 
-div {	
-    perspective: 400px;
-	//background-color: #505050;
-	width: 800px;
-	margin: 0 auto;
+.Frank_Ueberschrift
+{
+font-family: Vivaldi;
+font-size: 50px;
 }
 
-table {
-	margin: auto;
-	border: 3px solid black;
-    border-collapse: collapse;
-	background-color: #a0a0a0;
-	color: #000000;
-    transform: rotateX(30deg);
+.Von_Nach
+{
+position: absolute;
+right: 0px;
+width: 300px;
+padding: auto;
+
 }
+
+span
+{
+background: yellow;
+color:#000000;
+}
+
+.Frank_T
+{
+margin: auto;
+border: 3px solid black;
+border-collapse: collapse;
+background-color: #a0a0a0;
+color: #000000;
+transform: rotateX(30deg);
+text-align: center
+
+}
+
+
+
+div {
+perspective: 400px;
+width: 800px;
+margin: auto;
+}
+
 
 th {	
 	border: 1px solid black;

@@ -4,45 +4,40 @@
   <meta charset="utf-8">
   <link rel="stylesheet" href="css.php">
 	 <?php
-	 /*
-	 //SQL
-	 $url="localhost";
-	 $user="root";
-	 $pass="";
-	 $dbName="frank_schach_29.02.2016"
+	// Spielregeln
 
-	 //DB-Verbindung
-	 $db=mysql_connect(§url,$user,$pass);
-	 mysql_set_charset('utf8'); // mysql ab PHP5.2.3
-
-	 if ($db==false)
-	 {
-		 echo "Keine Verbindung m&ouml:glich!";
-		 exit;
-	 }
-	 */
-			/*function schachregeln($_zugnr,$_vonZeile, $_vonSpalte,$_nachZeile, $_nachSpalte) {
-				if ($_vonZeile == $_nachZeile && $_vonSpalte == $_nachSpalte) {
+	 function schachregeln($_zugnr, $_vonZeile, $_vonSpalte, $_nachZeile, $_nachSpalte)
+				{
+				if ($_vonZeile == $_nachZeile && $_vonSpalte == $_nachSpalte) {		// Überprüfung das er nicht auf das gleiche Feld springt
 					return false;
 				}
+
+			/*	if ($_vonZeile == $_vonSpalte == '&nbsp;')				// Leere Felder können kein Feld ausgewählten
+
+						if ($_zugnr%2) $figur = substr($_schachbrett[$_vonZeile][$_vonSpalte],2,4);
+						echo $figur;
+			*/
+					return true;
 				
-				return true;
-				
-			}*/
+			}
+
+
 	?>
+
   <title>Schachbett von Frank</title>
   </head>
   
   
   <body>
-  
-  <header><h1>Schachbrett von Frank</h1></header>
+  <header><h1 class="Frank_Ueberschrift">Schachbrett von <a href="http://frank-panzer.de" target="_blank">Frank Panzer</a></h1></header>
   <a href="http://www.schach-bremen.de/lehrbuch/" target="_blank">Spielregeln</a> - <a href="index.php">Spiel Neu beginnen</a>
 	<div>
-		<table>
-			<?php 
-				
-				$RookW = '&#9814;';
+		<table class="Frank_T">
+			<?php
+
+			//include (chat.php);
+
+				$RookW  = '&#9814;';
 				$KnightW = '&#9816;';
 				$BishopW = '&#9815;';
 				$KingW = '&#9812;';
@@ -77,16 +72,36 @@
 				if (isset ($_GET['spielstand'])) {
 					$schachfeld = unserialize(urldecode($_GET['spielstand']));
 					}
+
+
+
 				
-				if (isset ($_GET['zugnummer'])) {
+				if (isset ($_GET['zugnummer']))						// Bewegungsänderung
+				{
+					//Spielstand abspeicherung in eine Textdatei
+
+					if(file_exists('spielstand.txt'))
+							{
+							$handle = fopen("spielstand.txt","r");
+							$spielstand=unserialize(base64_decode(fread($handle,filesize("spielstand.txt"))));
+							fclose($handle);
+							// print_r($spielstand);
+							}
+								else
+							{
+								echo "Datei nicht gefunden";
+							}
+
 					$zugnr = $_GET['zugnummer'];
 						
-						if ($zugnr % 2) {
-							$playercolor = "Blau";
-						}
-						else {
-							$playercolor = "Orange";
-						}
+					if ($zugnr % 2)
+							{
+								$playercolor = "Blau";
+							}
+						else
+							{
+								$playercolor = "Orange";
+							}
 				}
 					if (isset ($_GET['Von']) && isset ($_GET['Nach'])) {
 						$vonZeile = 9-(ord(substr($_GET['Von'],1,1))-48);			// '2' zur Zahl 2 machen , nach ord hab ich 50 , 48 abziehen, dann ..
@@ -112,7 +127,7 @@
 					}
 									
 					else {
-						echo "<p>Bitte machen Sie den $zugnr. Zug, $playercolor.</p>";
+						echo "Bitte machen Sie den $zugnr. Zug, $playercolor.</p>";
 						$spielstand = $schachfeld; 
 					}
 				
@@ -132,16 +147,28 @@
 							}
 						}
 					echo "</tr></div>";
+
+					//Speicherung in Textdatei
+					$spielstatus=base64_encode(serialize($spielstand));    //spielstand wird für übergabe an datei kodiert!
+					$handle=fopen("spielstand.txt","w");
+					//fwrite ($handle,$zugnr."|");
+					fwrite($handle,$spielstatus);
+					fclose($handle);
+					unset($handle);
 				}	
 				
 				// User Eingabefeld
 				?>
 				<form action="" method="GET" >
-				<label>von</label>
-				<select name="Von" size="4">
+
+		<?php // Von ?>
+		<div class="Von_Nach">
+
+				<label><span>Von - Nach</span><br></label>
+					<select name="Von" size="4" title="Von" multiple>
 				<?php
 					for($i='A';$i<='H';$i++)
-					{  
+					{
 						for($j='1';$j<='8';$j++)
 							{
 								if (!empty($spielstand[9-$j][ord($i)-64])) {
@@ -151,31 +178,34 @@
 					}
 				?>
 				</select>
-				<label>nach</label>
-				<select name="Nach" size="4">
+
+
+		<?php // Nach ?>
+
+				<label>  </label>
+				<select name="Nach" size="4" title="Nach">
 				<?php
 				 for($i='A';$i<='H';$i++)
 				 {  
 					for($j='1';$j<='8';$j++)
 						{							
-								//if (empty($spielstand[9-$j][ord($i)-64])) {
+								if (empty($spielstand[9-$j][ord($i)-64])) {
 								echo "<option value=".$i.$j.">".$i.$j."</option>"; 
-								//}
+								}
 						}
 				 }				 
 				 
 				echo "</select><br><input type='hidden' name='zugnummer' value='".$zugnr."'>";
 				echo "<input type='hidden' name='spielstand' value='" . urlencode(serialize($spielstand)) . "'>";
-				echo "<input type='submit' value='jetzt bewegen'></form>";
+				echo "<input type='submit' value='Zug machen!'></form>";
 				?>
-
+		</div>
 
 
 		</table>
 
-	  
 	</div>
-  &copy; 2016 by <a href="http://frank-panzer.de" target="_blank">Frank Panzer</a>
+
   
   </body>
   
